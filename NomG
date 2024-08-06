@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomGuess</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            flex: 1;
+        }
+        .results p {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .footer span {
+            color: #6c757d;
+        }
+    </style>
+    <script>
+        function generateCombinations(length, numCombinations) {
+            // Initialize the Markov chain with a random starting state
+            let currentState = '';
+            for (let i = 0; i < length; i++) {
+                currentState += Math.floor(Math.random() * 10).toString();
+            }
+            let combinations = new Set([currentState]);
+
+            // Function to propose a new state by changing one digit in the current state
+            function proposeNewState(state) {
+                let index = Math.floor(Math.random() * length);
+                let newDigit = Math.floor(Math.random() * 10).toString();
+                return state.substring(0, index) + newDigit + state.substring(index + 1);
+            }
+
+            while (combinations.size < numCombinations) {
+                let newState = proposeNewState(currentState);
+                combinations.add(newState);
+                currentState = newState;
+            }
+
+            return combinations;
+        }
+
+        function displayCombinations() {
+            let length = parseInt(document.getElementById("lengthInput").value);
+            let numCombinations = parseInt(document.getElementById("numCombinationsInput").value);
+
+            let combinations = generateCombinations(length, numCombinations);
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = '';
+
+            combinations.forEach(combination => {
+                let p = document.createElement("p");
+                p.textContent = combination;
+                resultsDiv.appendChild(p);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">NomGuess</h1>
+        <form>
+            <div class="form-group">
+                <label for="lengthInput">String Length</label>
+                <input type="number" class="form-control" id="lengthInput" placeholder="Enter string length">
+            </div>
+            <div class="form-group">
+                <label for="numCombinationsInput">Number of Combinations</label>
+                <input type="number" class="form-control" id="numCombinationsInput" placeholder="Enter number of combinations">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="displayCombinations()">Generate</button>
+        </form>
+        <div id="results" class="mt-4 results">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            <span>© 2024 Thinkkade. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
